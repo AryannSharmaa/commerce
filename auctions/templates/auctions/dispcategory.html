@@ -1,0 +1,20 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <h2>Display Category</h2>
+
+    <div class="row"> 
+        {%for list in item%}
+        <div class="card" style="width: 18rem;">
+            <img class="card-img-top" src="{{list.imageUrl}}" alt="{{list.title}}">
+            <div class="card-body">
+              <h5 class="card-title">{{list.title}}</h5>
+              <h6 class="card-text">Price:{{list.price}}</h6>
+              <p class="card-text">{{list.description}}</p>
+              <a href="{%url 'listing' list.id%}" class="btn btn-primary">{{list.title}}</a>
+            </div>
+          </div>
+        
+        {%endfor%}
+        </div>
+{% endblock %}

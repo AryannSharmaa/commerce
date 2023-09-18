@@ -1,0 +1,101 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <h2>Listing: {{item.title}} </h2>
+    {% if user.is_authenticated %}
+    {% if watchlist %}
+    <form action="{%url 'remove' item.id%}" method="POST" >
+        {%csrf_token%}
+        <button type="submit" class="btn btn-dark">WatchListed</button>
+    </form>
+    {%else%}
+    <form action="{%url 'add' item.id%}" method="POST">
+        {%csrf_token%}
+        <button type="submit" class="btn btn-light" >WatchList</button>
+    </form>
+    {%endif%}
+    
+    {%endif%}
+    <img src="{{item.imageUrl}}" alt="">
+    <p>{{item.description}}</p>
+    <h3>Price: {{item.price}}</h3>
+    {%if user.is_authenticated%}
+    {%if user == item.owner%}
+    {%if item.isActive%}
+    <form action="{%url 'close'%}" method="POST">
+        {%csrf_token%}
+        <input type="hidden" name="id" value="{{item.id}}">
+        <button type="submit" class="btn btn-danger">Close</button>
+    </form>
+    {%endif%}
+    
+    {%else%}
+    {%if item.isActive%}
+    <form action="{%url 'bid'%} " method="POST">
+        {%csrf_token%}
+        <input type="hidden" name="id" value="{{item.id}}">
+        <input type="number" name="bid" class="form-control" min="{{item.price}}" placeholder="Bid" required>
+        <button type="submit" class="btn btn-primary">Bid</button>
+    </form>
+    
+    {%endif%}
+
+    {%endif%}
+    {%if item.isActive%}
+    {%if item.bid%}
+    <h5>Current Bidder: {{item.bid.user}}</h5>
+    {%endif%}
+    {%else%}
+    <h4>Winner: {{item.bid.user}}</h4>
+    {%endif%}
+    
+    {%endif%}
+
+<div >
+    <h4>Details</h4>
+    <ul>
+        <li>
+            Listed by: {{item.owner}}
+        </li>
+        {% if item.category%}
+        <li>Category: {{item.category}} </li>
+        {%else%}
+        <li>Category: No Category Listed</li>
+        {%endif%}
+    </ul>
+</div>
+
+<div >
+    <h2>Comments</h2>
+    <ul style="list-style: none;">
+        {%for comment in comments%}
+        <div class=" justify-content-center">
+            <li>
+                <div  class="card" style="width: 90%;">
+                    <div class="card-body">
+                      <h5 class="card-title">{{comment.author}}</h5>
+                      <p class="card-text">&nbsp&nbsp{{comment.message}}</p>
+                      
+                  </div>
+            </li>
+        {%empty%}
+            <li>No comments</li>
+        </div>    
+        {%endfor%}
+    
+    </ul>
+    {%if user.is_authenticated%}
+    <form action="{%url 'addcomment' %}" method="POST">
+        {%csrf_token%}
+        <input type="hidden" name="id" value="{{item.id}}">
+        <textarea name="comment" class="form-control" rows="3" placeholder="Write your comment."  ></textarea>
+        <button type="submit" class="btn btn-primary">Comment</button>
+    </form>
+    {%endif%}
+</div>
+
+
+
+    
+   
+{% endblock %}
